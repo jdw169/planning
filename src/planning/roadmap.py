@@ -88,10 +88,13 @@ class Roadmap(object):
         """
         # Hint: call the check_edge_validity method from above.
         # BEGIN QUESTION 1.3
-        "*** REPLACE THIS LINE ***"
-        raise NotImplementedError
+        
+        edgeValid = []
+        for i in range(weighted_edges.shape[0]):
+            edgeValid.append(self.check_edge_validity(int(weighted_edges[i,0]), int(weighted_edges[i,1])))
+        
         # END QUESTION 1.3
-        return weighted_edges
+        return weighted_edges[edgeValid]
 
     def construct(self):
         """Construct the roadmap.

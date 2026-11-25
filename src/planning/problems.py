@@ -44,12 +44,16 @@ class PlanarProblem(object):
         """
         x = states[:, 0]
         y = states[:, 1]
-        valid = np.ones_like(x, dtype=bool)  # feel free to delete this line
+        # valid = np.ones_like(x, dtype=bool)  # feel free to delete this line
 
         # Check that x and y are within the extents of the map.
         # BEGIN QUESTION 1.2
-        "*** REPLACE THIS LINE ***"
-        raise NotImplementedError
+
+        xValid = (self.extents[0,0] <= x) & (x < self.extents[0,1]) 
+        yValid = (self.extents[1,0] <= y) & (y < self.extents[1,1]) 
+
+        valid = xValid & yValid
+
         # END QUESTION 1.2
 
         # The units of the state are meters and radians. We need to convert the
@@ -67,8 +71,20 @@ class PlanarProblem(object):
         # integers. Then, index into self.permissible_region, remembering that
         # the zeroth dimension is the height.
         # BEGIN QUESTION 1.2
-        "*** REPLACE THIS LINE ***"
-        raise NotImplementedError
+        
+        # cast the new state values as int
+        x = states[:, 0].astype(int)
+        y = states[:, 1].astype(int)
+
+        # To save on computation, only care about valid points
+        x_valid = x[valid]
+        y_valid = y[valid]
+
+        collision = self.permissible_region[y_valid, x_valid]
+
+        # this trick updates only the True positions from valid (that were used to pick which collisions to find
+        valid[valid] = collision
+
         # END QUESTION 1.2
 
         # Convert the units back from pixels to meters for the caller

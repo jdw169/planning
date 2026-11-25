@@ -58,8 +58,10 @@ def astar(rm, start, goal):
             # parent exists). If it's in collision, stop processing this entry;
             # we'll wait for another possible parent later in the queue.
             # BEGIN QUESTION 2.2
-            "*** REPLACE THIS LINE ***"
-            raise NotImplementedError
+            if entry.parent != NULL and not rm.check_edge_validity(
+                entry.parent, entry.node
+            ):
+                continue
             # END QUESTION 2.2
 
         expanded[entry.node] = True
@@ -86,8 +88,15 @@ def astar(rm, start, goal):
             # However, if the neighbor has already been expanded, it's no longer
             # necessary to insert this QueueEntry.
             # BEGIN QUESTION 2.1
-            "*** REPLACE THIS LINE ***"
-            raise NotImplementedError
+            if expanded[neighbor]:
+                continue
+
+            cost_to_come = entry.cost_to_come + weight
+            f_value = cost_to_come + h
+            queue.push(
+                QueueEntry(f_value, next(c), neighbor, entry.node, cost_to_come)
+            )
+            #raise NotImplementedError
             # END QUESTION 2.1
     raise nx.NetworkXNoPath("Node {} not reachable from {}".format(goal, start))
 
@@ -104,8 +113,14 @@ def extract_path(parents, goal):
     """
     # Follow the parents of the node until a NULL entry is reached
     # BEGIN QUESTION 2.1
-    "*** REPLACE THIS LINE ***"
-    raise NotImplementedError
+    vpath = []
+    curr = goal
+    while curr != NULL:
+        vpath.append(curr)
+        curr = parents[curr]
+    vpath.reverse()
+    return vpath
+    #raise NotImplementedError
     # END QUESTION 2.1
 
 
@@ -133,8 +148,16 @@ def shortcut(rm, vpath, num_trials=100):
         indices = np.random.choice(len(vpath), size=2, replace=False)
         i, j = np.sort(indices)
         # BEGIN QUESTION 2.3
-        "*** REPLACE THIS LINE ***"
-        raise NotImplementedError
+        if j == i + 1:
+            continue
+
+        shortcut_dist = rm.heuristic(vpath[i], vpath[j])
+        current_dist = rm.compute_path_length(vpath[i : j + 1])
+
+        if shortcut_dist < current_dist and rm.check_edge_validity(
+            vpath[i], vpath[j]
+        ):
+            vpath = list(vpath[: i + 1]) + list(vpath[j:])
         # END QUESTION 2.3
     return vpath
 
